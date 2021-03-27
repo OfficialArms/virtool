@@ -1,6 +1,7 @@
 import { get } from "lodash-es";
 import PropTypes from "prop-types";
 import React, { useCallback } from "react";
+import CX from "classnames";
 import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
 import { Tooltip } from "./Tooltip";
@@ -23,6 +24,13 @@ const StyledIcon = styled.i`
         color: ${getIconHoverColor};
     }
 `;
+
+export const UnstyledIconButton = ({ className, name, onClick }) => {
+    const classNames = CX(className, "fas", `fa-${name}`);
+    return <i role="button" className={classNames} onClick={onClick} />;
+};
+
+export const IconButton = styled(UnstyledIconButton)``;
 
 export const Icon = ({ hoverable, style, ...props }) => {
     const handleClick = useCallback(e => {

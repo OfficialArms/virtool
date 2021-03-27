@@ -52,6 +52,10 @@ export const DropdownMenuLink = styled(({ children, className, to, target, rel }
     ${dropdownItemMixin}
 `;
 
-export const DropdownButton = ({ children }) => <StyledButton as={MenuButton}>{children}</StyledButton>;
+export const DropdownButton = ({ children, className }) => (
+    <StyledButton as={MenuButton} className={className}>
+        {children}
+    </StyledButton>
+);
 
 export const Dropdown = Menu;

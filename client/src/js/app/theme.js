@@ -1,4 +1,4 @@
-import { get } from "lodash-es";
+import { get, mapKeys } from "lodash-es";
 
 export const colors = ["blue", "green", "grey", "orange", "purple", "red"];
 
@@ -91,6 +91,10 @@ export const getFontWeight = weight => ({ theme }) => theme.fontWeight[weight];
 
 export const border = getBorder;
 
+export const createThemeShortcut = property => {
+    return mapKeys(theme[property], key => ({ theme }) => theme[property][key]);
+};
+
 export const borderRadius = {
     sm: ({ theme }) => theme.borderRadius.sm,
     md: ({ theme }) => theme.borderRadius.md,
@@ -105,6 +109,8 @@ export const boxShadow = {
     input: ({ theme }) => theme.boxShadow.input,
     inset: ({ theme }) => theme.boxShadow.inset
 };
+
+export const fontSize = createThemeShortcut("fontSize");
 
 export const fontWeight = {
     normal: ({ theme }) => theme.fontWeight.normal,

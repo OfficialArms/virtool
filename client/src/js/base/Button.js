@@ -38,6 +38,44 @@ const getButtonHoverColor = ({ color, theme }) => {
     return theme.color.greyLightest;
 };
 
+export const BaseButton = styled.button`
+    align-items: center;
+    background-color: ${getButtonBackgroundColor};
+    background-image: none;
+    border: 1px solid ${getButtonBorderColor};
+    border-radius: ${props => props.theme.borderRadius.sm};
+    box-shadow: ${props => (props.active ? props.theme.boxShadow.inset : "")};
+    color: ${getButtonForegroundColor};
+    cursor: pointer;
+    display: inline-flex;
+    font-weight: 500;
+    justify-content: center;
+    margin-bottom: 0;
+    min-width: 42px;
+    min-height: 36px;
+    opacity: ${props => (props.disabled ? 0.5 : 1)};
+    padding: 0 10px;
+    position: relative;
+    user-select: none;
+    touch-action: manipulation;
+    transition: box-shadow 200ms ease-in-out;
+    white-space: nowrap;
+
+    :disabled {
+        cursor: not-allowed;
+    }
+
+    :focus {
+        color: ${getButtonForegroundColor};
+    }
+
+    :not(:disabled):hover {
+        background-color: ${getButtonHoverColor};
+        border-color: ${getButtonHoverColor};
+        color: ${getButtonForegroundColor};
+    }
+`;
+
 export const StyledButton = styled.button`
     align-items: center;
     background-color: ${getButtonBackgroundColor};
@@ -65,12 +103,12 @@ export const StyledButton = styled.button`
         margin-left: 5px;
     }
 
-    :focus {
-        color: ${getButtonForegroundColor};
-    }
-
     :disabled {
         cursor: not-allowed;
+    }
+
+    :focus {
+        color: ${getButtonForegroundColor};
     }
 
     :not(:disabled):hover {
