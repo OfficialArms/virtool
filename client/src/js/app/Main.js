@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
+import { LabelAssignment } from "../samples/components/Create/LabelAssignment";
 import { getAccount } from "../account/actions";
 import { getSettings } from "../administration/actions";
 import { Container, LoadingPlaceholder } from "../base";
@@ -68,6 +69,7 @@ export const Main = ({ ready, onLoad }) => {
                             <Route path="/account" component={Account} />
                         </Switch>
                     </Suspense>
+                    <LabelAssignment />
                 </MainContainer>
 
                 <Sidebar />
