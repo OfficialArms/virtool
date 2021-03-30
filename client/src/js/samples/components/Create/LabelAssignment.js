@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { map } from "lodash-es";
+import { connect } from "react-redux";
+import { listLabels } from "../../../labels/actions";
+import { getLabels } from "../../../labels/selectors";
+
 // import styled from "styled-components";
 
 import { Button, Checkbox, Select } from "../../../base";
@@ -10,36 +14,37 @@ import { Button, Checkbox, Select } from "../../../base";
 //     grid-gap: ${props => props.theme.gap.column};
 // `;
 
-export const LabelAssignment = ({ label }) => {
-    // const labels = map(this.props.labels, label => (
-    //     <Item
-    //         key={label.id}
-    //         name={label.name}
-    //         color={label.color}
-    //         description={label.description}
-    //         id={label.id}
-    //         removeLabel={this.onRemove}
-    //         editLabel={this.onEdit}
-    //     />
-    // ));
+export const LabelAssignment = state => {
+    useEffect(() => {
+        // state.onLoadLabels();
+    });
 
-    const values = ["1", "2", "three", "4"];
-    const test = map(values, value => (
-        <option key={value}>
-            <Button children={value}></Button>
-        </option>
-    ));
+    console.log("State is: ", state);
+
+    const values = [
+        { name: "1", id: "1" },
+        { name: "two", id: "2" }
+    ];
+    const test = map(values, value => <option key={value}>{value}</option>);
     const props = { children: values };
     return (
         <React.Fragment>
-            <h1 style={{ textAlign: "center" }}>this is the label assignment thingy</h1>
-            <Select>{test}</Select>
+            <h1>LabelAssignment Component</h1>
+            {/* <Select>{test}</Select> */}
         </React.Fragment>
     );
 };
 
-// export const mapDispatchToProps = dispatch => ({
-//     onLoadLabels: () => {
-//         dispatch(listLabels());
-//     }
-// });
+export const mapStateToProps = state => ({
+    show: routerLocationHasState(state, "removeLabel"),
+    labels: getLabels(state),
+    error: get(state, "errors.UPDATE_SAMPLE_ERROR.message", "")
+});
+
+export const mapDispatchToProps = dispatch => ({
+    onLoadLabels: () => {
+        dispatch(listLabels());
+    }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LabelAssignment);
