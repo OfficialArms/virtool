@@ -1,12 +1,12 @@
 import { xor } from "lodash-es";
 import React, { useCallback } from "react";
 import styled from "styled-components";
+import { connect } from "react-redux";
 import { Dropdown, DropdownMenuItem, DropdownMenuList, Icon } from "../../../../base";
 import { getLabels } from "../../../../labels/selectors";
 import { updateSample } from "../../../sagas";
 import { getSampleLabels } from "../../../selectors";
 import { SampleLabel } from "../../Label";
-import { connect } from "react-redux";
 import { SidebarHeaderButton } from "./Header";
 
 export const SampleLabelsDropdownItem = ({ color, description, name, onClick }) => {
