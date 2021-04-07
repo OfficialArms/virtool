@@ -161,6 +161,7 @@ async def get(req):
 
     """
     db = req.app["db"]
+    pg = req.app["pg"]
 
     sample_id = req.match_info["sample_id"]
 
@@ -179,19 +180,15 @@ async def get(req):
 
     document["caches"] = caches
 
-    if document["ready"] is True:
-        # Only update file fields if sample creation is complete.
-        for index, file in enumerate(document["files"]):
-            snake_case = document["name"].replace(" ", "_")
-
-            file.update({
-                "name": file["name"].replace("reads_", f"{snake_case}_"),
-                "download_url": file["download_url"].replace("reads_", f"{snake_case}_"),
-                "replace_url": f"/upload/samples/{sample_id}/files/{index + 1}"
-            })
-
     document = await virtool.subtractions.db.attach_subtractions(db, document)
-    document = await virtool.samples.db.attach_labels(req.app["pg"], document)
+    document = await virtool.samples.db.attach_labels(pg, document)
+    document = await virtool.samples.db.attach_artifacts_and_reads(pg, document)
+
+    if document["ready"]:
+        for file in document["reads"]:
+            file.update({
+                "download_url": f"/api/samples/{sample_id}/reads/{file['name']}"
+            })
 
     return json_response(virtool.utils.base_processor(document))
 
@@ -351,7 +348,10 @@ async def create(req):
         "user": {
             "id": user_id
         },
-        "paired": len(data["files"]) == 2
+        "paired": len(data["files"]) == 2,
+        # Associated artifacts and reads should not yet exist
+        "artifacts": [],
+        "reads": []
     })
 
     uploads = [(await virtool.uploads.db.get(pg, upload_id)).to_dict() for upload_id in data["files"]]
@@ -527,6 +527,8 @@ async def finalize(req):
             session.add(row)
 
         await session.commit()
+
+    document = await virtool.samples.db.attach_artifacts_and_reads(pg, document)
 
     processed = virtool.utils.base_processor(document)
 

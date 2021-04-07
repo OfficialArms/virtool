@@ -4,6 +4,7 @@ import logging
 import signal
 import sys
 import typing
+from urllib.parse import urlparse, urlunparse
 
 import aiohttp.client
 import aiohttp.web
@@ -14,10 +15,9 @@ import pymongo.errors
 
 import virtool.analyses.db
 import virtool.config
-import virtool.db.core
 import virtool.db.migrate
 import virtool.db.mongo
-import virtool.db.utils
+import virtool.dev.fake
 import virtool.dispatcher
 import virtool.hmm.db
 import virtool.jobs.interface
@@ -34,19 +34,21 @@ import virtool.subtractions.utils
 import virtool.tasks.pg
 import virtool.utils
 import virtool.version
-
+from virtool.analyses.db import StoreNuvsFilesTask
+from virtool.dev.fake import create_fake_data_path
+from virtool.dispatcher.client import DispatcherClient
 from virtool.dispatcher.dispatcher import Dispatcher
 from virtool.dispatcher.events import DispatcherSQLEvents
-from virtool.dispatcher.client import DispatcherClient
 from virtool.dispatcher.listener import RedisDispatcherListener
-from virtool.samples.db import CompressSamplesTask
-from virtool.types import App
-from virtool.tasks.runner import TaskRunner
-from virtool.tasks.client import TasksClient
-from virtool.analyses.db import StoreNuvsFilesTask
-from virtool.uploads.db import MigrateFilesTask
-from virtool.subtractions.db import AddSubtractionFilesTask, WriteSubtractionFASTATask
+from virtool.pg.testing import create_test_database
 from virtool.references.db import CreateIndexJSONTask, DeleteReferenceTask
+from virtool.samples.db import CompressSamplesTask, MoveSampleFilesTask
+from virtool.subtractions.db import AddSubtractionFilesTask, WriteSubtractionFASTATask
+from virtool.tasks.client import TasksClient
+from virtool.tasks.runner import TaskRunner
+from virtool.types import App
+from virtool.uploads.db import MigrateFilesTask
+from virtool.utils import random_alphanumeric
 
 logger = logging.getLogger("startup")
 
@@ -186,10 +188,51 @@ async def init_executors(app: aiohttp.web.Application):
     app["process_executor"] = process_executor
 
 
+async def init_fake(app: aiohttp.web_app.Application):
+    if app["config"]["fake"]:
+        await virtool.dev.fake.populate(app)
+
+
+async def init_fake_config(app: App):
+    """
+    If the ``fake`` config flag is set, patch the config so that the MongoDB and Postgres databases
+    and the data directory are faked.
+
+    :param app:
+
+    """
+    suffix = random_alphanumeric()
+
+    if app["config"]["fake"]:
+        url = urlparse(app["config"]["postgres_connection_string"])
+
+        base_connection_string = urlunparse((
+            url.scheme,
+            url.netloc,
+            "",
+            "",
+            "",
+            ""
+        ))
+
+        name = f"fake_{suffix}"
+
+        await create_test_database(
+            base_connection_string,
+            name
+        )
+
+        app["config"].update({
+            "db_name": f"fake-{suffix}",
+            "data_path": create_fake_data_path(),
+            "postgres_connection_string": f"{base_connection_string}/{name}"
+        })
+
+
 async def init_jobs_client(app: aiohttp.web_app.Application):
     """
-    An application `on_startup` callback that initializes a Virtool :class:`virtool.job_manager.Manager` object and
-    puts it in app state.
+    An application `on_startup` callback that initializes a Virtool
+    :class:`virtool.job_manager.Manager` object and puts it in app state.
 
     :param app: the app object
     :type app: :class:`aiohttp.aiohttp.web.Application`
@@ -268,7 +311,9 @@ async def init_routes(app: aiohttp.web_app.Application):
 
 
 async def init_sentry(app: typing.Union[dict, aiohttp.web_app.Application]):
-    if not app["settings"]["no_sentry"] and app["settings"].get("enable_sentry", True) and not app["settings"]["dev"]:
+    if (not app["settings"]["no_sentry"]
+            and app["settings"].get("enable_sentry", True)
+            and not app["settings"]["dev"]):
         logger.info("Configuring Sentry")
         virtool.sentry.setup(app["version"])
 
@@ -297,8 +342,8 @@ async def init_version(app: typing.Union[dict, aiohttp.web.Application]):
     """
     Bind the application version to the application state `dict`.
 
-    The value will come by checking `--force-version`, the `VERSION` file, or the current Git tag if the containing
-    folder is a Git repository.
+    The value will come by checking `--force-version`, the `VERSION` file, or the current Git tag
+    if the containing folder is a Git repository.
 
     :param app: the application object
 
@@ -319,8 +364,8 @@ async def init_version(app: typing.Union[dict, aiohttp.web.Application]):
 
 async def init_task_runner(app: aiohttp.web.Application):
     """
-    An application `on_startup` callback that initializes a Virtool :class:`virtool.tasks.runner.TaskRunner` object and
-    puts it in app state.
+    An application `on_startup` callback that initializes a Virtool
+    :class:`virtool.tasks.runner.TaskRunner` object and puts it in app state.
 
     :param app: the app object
 
@@ -340,7 +385,8 @@ async def init_tasks(app: aiohttp.web.Application):
     scheduler = get_scheduler_from_app(app)
 
     logger.info("Checking subtraction FASTA files")
-    subtractions_without_fasta = await virtool.subtractions.db.check_subtraction_fasta_files(app["db"], app["settings"])
+    subtractions_without_fasta = await virtool.subtractions.db.check_subtraction_fasta_files(
+        app["db"], app["settings"])
     for subtraction in subtractions_without_fasta:
         await app["tasks"].add(WriteSubtractionFASTATask, context={"subtraction": subtraction})
 
@@ -351,5 +397,6 @@ async def init_tasks(app: aiohttp.web.Application):
     await app["tasks"].add(AddSubtractionFilesTask)
     await app["tasks"].add(StoreNuvsFilesTask)
     await app["tasks"].add(CompressSamplesTask)
+    await app["tasks"].add(MoveSampleFilesTask)
 
     await scheduler.spawn(app["tasks"].add_periodic(MigrateFilesTask, 3600))

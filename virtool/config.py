@@ -264,16 +264,20 @@ def start_runner(ctx, job_list, mem, proc, temp_path):
     type=int
 )
 @click.option(
-    "--test-db",
-    is_flag=True,
-    type=bool
+    "--fake",
+    help="Start the jobs API with fake data for integration testing",
+    type=bool,
+    is_flag=True
 )
 @click.pass_context
-def start_jobs_api(ctx, port, host, test_db):
+def start_jobs_api(ctx, fake, port, host):
     """Start a Virtool Jobs API server"""
     logger.info("Starting jobs API process")
     asyncio.get_event_loop().run_until_complete(
         virtool.jobs_api.main.run(
-            **dict(host=host, port=port, test_db=test_db, **ctx.obj)
+            fake=fake,
+            host=host,
+            port=port,
+            **ctx.obj
         )
     )

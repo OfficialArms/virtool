@@ -8,41 +8,17 @@ from snapshottest import GenericRepr, Snapshot
 snapshots = Snapshot()
 
 snapshots['test_get[uvloop-True-None] 1'] = {
-    'caches': [
-    ],
-    'created_at': '2015-10-06T20:00:00Z',
-    'files': [
+    'artifacts': [
         {
-            'download_url': '/download/samples/files/file_1.fq.gz',
-            'id': 'foo',
-            'name': 'Bar.fq.gz',
-            'replace_url': '/upload/samples/test/files/1'
-        }
-    ],
-    'id': 'test',
-    'labels': [
-        {
-            'color': '#a83432',
-            'description': 'This is a bug',
             'id': 1,
-            'name': 'Bug'
+            'name': 'reference.fa.gz',
+            'name_on_disk': None,
+            'sample': 'test',
+            'size': None,
+            'type': 'fasta',
+            'uploaded_at': None
         }
     ],
-    'name': 'Test',
-    'ready': True,
-    'subtractions': [
-        {
-            'id': 'foo',
-            'name': 'Foo'
-        },
-        {
-            'id': 'bar',
-            'name': 'Bar'
-        }
-    ]
-}
-
-snapshots['test_get[uvloop-False-None] 1'] = {
     'caches': [
     ],
     'created_at': '2015-10-06T20:00:00Z',
@@ -63,6 +39,100 @@ snapshots['test_get[uvloop-False-None] 1'] = {
         }
     ],
     'name': 'Test',
+    'reads': [
+        {
+            'download_url': '/api/samples/test/reads/reads_1.fq.gz',
+            'id': 1,
+            'name': 'reads_1.fq.gz',
+            'name_on_disk': 'reads_1.fq.gz',
+            'sample': 'test',
+            'size': None,
+            'upload': {
+                'created_at': None,
+                'id': 1,
+                'name': 'test',
+                'name_on_disk': None,
+                'ready': False,
+                'removed': False,
+                'removed_at': None,
+                'reserved': False,
+                'size': None,
+                'type': None,
+                'uploaded_at': None,
+                'user': None
+            },
+            'uploaded_at': None
+        }
+    ],
+    'ready': True,
+    'subtractions': [
+        {
+            'id': 'foo',
+            'name': 'Foo'
+        },
+        {
+            'id': 'bar',
+            'name': 'Bar'
+        }
+    ]
+}
+
+snapshots['test_get[uvloop-False-None] 1'] = {
+    'artifacts': [
+        {
+            'id': 1,
+            'name': 'reference.fa.gz',
+            'name_on_disk': None,
+            'sample': 'test',
+            'size': None,
+            'type': 'fasta',
+            'uploaded_at': None
+        }
+    ],
+    'caches': [
+    ],
+    'created_at': '2015-10-06T20:00:00Z',
+    'files': [
+        {
+            'download_url': '/download/samples/files/file_1.fq.gz',
+            'id': 'foo',
+            'name': 'Bar.fq.gz'
+        }
+    ],
+    'id': 'test',
+    'labels': [
+        {
+            'color': '#a83432',
+            'description': 'This is a bug',
+            'id': 1,
+            'name': 'Bug'
+        }
+    ],
+    'name': 'Test',
+    'reads': [
+        {
+            'id': 1,
+            'name': 'reads_1.fq.gz',
+            'name_on_disk': 'reads_1.fq.gz',
+            'sample': 'test',
+            'size': None,
+            'upload': {
+                'created_at': None,
+                'id': 1,
+                'name': 'test',
+                'name_on_disk': None,
+                'ready': False,
+                'removed': False,
+                'removed_at': None,
+                'reserved': False,
+                'size': None,
+                'type': None,
+                'uploaded_at': None,
+                'user': None
+            },
+            'uploaded_at': None
+        }
+    ],
     'ready': False,
     'subtractions': [
         {
@@ -564,9 +634,31 @@ snapshots['test_find[uvloop-fred-None-None-None-d_range6-meta6] 1'] = {
 }
 
 snapshots['test_finalize[uvloop-quality] 1'] = {
+    'artifacts': [
+        {
+            'id': 1,
+            'name': 'reference.fa.gz',
+            'name_on_disk': None,
+            'sample': 'test',
+            'size': None,
+            'type': 'fasta',
+            'uploaded_at': None
+        }
+    ],
     'id': 'test',
     'quality': {
     },
+    'reads': [
+        {
+            'id': 1,
+            'name': 'reads_1.fq.gz',
+            'name_on_disk': 'reads_1.fq.gz',
+            'sample': 'test',
+            'size': None,
+            'upload': None,
+            'uploaded_at': None
+        }
+    ],
     'ready': True
 }
 
@@ -593,6 +685,8 @@ snapshots['test_finalize_cache[uvloop-quality] 1'] = {
 snapshots['TestCreate.test[uvloop-none] 1'] = {
     'all_read': True,
     'all_write': True,
+    'artifacts': [
+    ],
     'created_at': '2015-10-06T20:00:00Z',
     'files': [
         {
@@ -617,6 +711,8 @@ snapshots['TestCreate.test[uvloop-none] 1'] = {
     'paired': False,
     'pathoscope': False,
     'quality': None,
+    'reads': [
+    ],
     'ready': False,
     'subtractions': [
         'apple'
@@ -630,6 +726,8 @@ snapshots['TestCreate.test[uvloop-none] 2'] = {
     '_id': '9pfsom1b',
     'all_read': True,
     'all_write': True,
+    'artifacts': [
+    ],
     'created_at': GenericRepr('datetime.datetime(2015, 10, 6, 20, 0)'),
     'files': [
         {
@@ -653,6 +751,8 @@ snapshots['TestCreate.test[uvloop-none] 2'] = {
     'paired': False,
     'pathoscope': False,
     'quality': None,
+    'reads': [
+    ],
     'ready': False,
     'subtractions': [
         'apple'
@@ -665,6 +765,8 @@ snapshots['TestCreate.test[uvloop-none] 2'] = {
 snapshots['TestCreate.test[uvloop-users_primary_group] 1'] = {
     'all_read': True,
     'all_write': True,
+    'artifacts': [
+    ],
     'created_at': '2015-10-06T20:00:00Z',
     'files': [
         {
@@ -689,6 +791,8 @@ snapshots['TestCreate.test[uvloop-users_primary_group] 1'] = {
     'paired': False,
     'pathoscope': False,
     'quality': None,
+    'reads': [
+    ],
     'ready': False,
     'subtractions': [
         'apple'
@@ -702,6 +806,8 @@ snapshots['TestCreate.test[uvloop-users_primary_group] 2'] = {
     '_id': '9pfsom1b',
     'all_read': True,
     'all_write': True,
+    'artifacts': [
+    ],
     'created_at': GenericRepr('datetime.datetime(2015, 10, 6, 20, 0)'),
     'files': [
         {
@@ -725,6 +831,8 @@ snapshots['TestCreate.test[uvloop-users_primary_group] 2'] = {
     'paired': False,
     'pathoscope': False,
     'quality': None,
+    'reads': [
+    ],
     'ready': False,
     'subtractions': [
         'apple'
@@ -737,6 +845,8 @@ snapshots['TestCreate.test[uvloop-users_primary_group] 2'] = {
 snapshots['TestCreate.test[uvloop-force_choice] 1'] = {
     'all_read': True,
     'all_write': True,
+    'artifacts': [
+    ],
     'created_at': '2015-10-06T20:00:00Z',
     'files': [
         {
@@ -761,6 +871,8 @@ snapshots['TestCreate.test[uvloop-force_choice] 1'] = {
     'paired': False,
     'pathoscope': False,
     'quality': None,
+    'reads': [
+    ],
     'ready': False,
     'subtractions': [
         'apple'
@@ -774,6 +886,8 @@ snapshots['TestCreate.test[uvloop-force_choice] 2'] = {
     '_id': '9pfsom1b',
     'all_read': True,
     'all_write': True,
+    'artifacts': [
+    ],
     'created_at': GenericRepr('datetime.datetime(2015, 10, 6, 20, 0)'),
     'files': [
         {
@@ -797,6 +911,8 @@ snapshots['TestCreate.test[uvloop-force_choice] 2'] = {
     'paired': False,
     'pathoscope': False,
     'quality': None,
+    'reads': [
+    ],
     'ready': False,
     'subtractions': [
         'apple'
