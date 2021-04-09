@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { map } from "lodash-es";
+import React, { useEffect, useState } from "react";
+import { map, get } from "lodash-es";
 import { connect } from "react-redux";
 import { listLabels } from "../../../labels/actions";
 import { getLabels } from "../../../labels/selectors";
@@ -14,29 +14,21 @@ import { Button, Checkbox, Select } from "../../../base";
 //     grid-gap: ${props => props.theme.gap.column};
 // `;
 
-export const LabelAssignment = state => {
+export const LabelAssignment = ({ labels, onLoadLabels }) => {
     useEffect(() => {
-        // state.onLoadLabels();
-    });
+        onLoadLabels();
+        console.log("labels = ", labels);
+    }, [labels.length]);
 
-    console.log("State is: ", state);
-
-    const values = [
-        { name: "1", id: "1" },
-        { name: "two", id: "2" }
-    ];
-    const test = map(values, value => <option key={value}>{value}</option>);
-    const props = { children: values };
     return (
         <React.Fragment>
             <h1>LabelAssignment Component</h1>
-            {/* <Select>{test}</Select> */}
         </React.Fragment>
     );
 };
 
 export const mapStateToProps = state => ({
-    show: routerLocationHasState(state, "removeLabel"),
+    // show: routerLocationHasState(state, "removeLabel"),
     labels: getLabels(state),
     error: get(state, "errors.UPDATE_SAMPLE_ERROR.message", "")
 });

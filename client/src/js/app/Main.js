@@ -4,10 +4,11 @@ import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
-import { LabelAssignment } from "../samples/components/Create/LabelAssignment";
+import LabelAssignment from "../samples/components/Create/LabelAssignment";
+import { Sidebar as SampleSideBar } from "../samples/components/Detail/Side/Side";
 import { getAccount } from "../account/actions";
 import { getSettings } from "../administration/actions";
-import { Container, LoadingPlaceholder } from "../base";
+import { Container, LoadingPlaceholder, SideContainer } from "../base";
 import DevDialog from "../dev/components/Dialog";
 import UploadOverlay from "../files/components/UploadOverlay";
 import NavBar from "../nav/components/NavBar";
@@ -47,7 +48,7 @@ export const Main = ({ ready, onLoad }) => {
 
     if (ready) {
         return (
-            <div>
+            <React.Fragment>
                 <Helmet>
                     <title>Virtool</title>
                     <meta charSet="utf-8" />
@@ -74,9 +75,13 @@ export const Main = ({ ready, onLoad }) => {
 
                 <Sidebar />
 
+                {/* <SideContainer>
+                    <SampleSideBar />
+                </SideContainer> */}
+
                 <DevDialog />
                 <UploadOverlay />
-            </div>
+            </React.Fragment>
         );
     }
 
