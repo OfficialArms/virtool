@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { map, get } from "lodash-es";
 import { connect } from "react-redux";
 import { listLabels } from "../../../labels/actions";
@@ -6,7 +6,7 @@ import { getLabels } from "../../../labels/selectors";
 
 // import styled from "styled-components";
 
-import { Button, Checkbox, Select } from "../../../base";
+import { DropdownMenuList, DropdownMenuItem, Dropdown } from "../../../base";
 
 // const LibraryTypeSelectBoxContainer = styled.div`
 //     display: grid;
@@ -23,6 +23,18 @@ export const LabelAssignment = ({ labels, onLoadLabels }) => {
     return (
         <React.Fragment>
             <h1>LabelAssignment Component</h1>
+            <Dropdown>
+                {labels &&
+                    labels.map(label => (
+                        <DropdownMenuItem onSelect={() => console.log(`You selected ${label.name}`)} key={label.id}>
+                            {label.name}
+                        </DropdownMenuItem>
+                        // <p key={label.id}>{label.name}</p>
+                    ))}
+            </Dropdown>
+            {/* <Dropdown>
+                <DropdownMenuList>{DropdownMenuItem}</DropdownMenuList>
+            </Dropdown> */}
         </React.Fragment>
     );
 };
