@@ -15,6 +15,7 @@ import {
     ViewHeader,
     ViewHeaderTitle
 } from "../../../base";
+import LabelAssignment from "../Create/LabelAssignment";
 import { clearError } from "../../../errors/actions";
 import { shortlistSubtractions } from "../../../subtraction/actions";
 import { getSubtractionShortlist } from "../../../subtraction/selectors";
@@ -208,6 +209,11 @@ export class CreateSample extends React.Component {
                         <InputGroup>
                             <InputLabel>Pairedness</InputLabel>
                             <Input value={pairedness} readOnly={true} />
+                        </InputGroup>
+
+                        <InputGroup>
+                            <InputLabel>Labels</InputLabel>
+                            <LabelAssignment />
                         </InputGroup>
                     </CreateSampleFields>
 

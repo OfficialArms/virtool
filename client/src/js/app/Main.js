@@ -70,7 +70,6 @@ export const Main = ({ ready, onLoad }) => {
                             <Route path="/account" component={Account} />
                         </Switch>
                     </Suspense>
-                    <LabelAssignment />
                 </MainContainer>
 
                 <Sidebar />
