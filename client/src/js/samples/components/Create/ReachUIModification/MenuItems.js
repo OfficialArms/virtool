@@ -1,3 +1,12 @@
+import * as React from "react";
+import { createDescendantContext, useDescendants, useDescendantKeyDown } from "@reach/descendants";
+import { usePrevious } from "@reach/utils/use-previous";
+import { createNamedContext } from "@reach/utils/context";
+import { isString } from "@reach/utils/type-check";
+import { makeId } from "@reach/utils/make-id";
+import { useComposedRefs } from "@reach/utils/compose-refs";
+import { composeEventHandlers } from "@reach/utils/compose-event-handlers";
+
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -9,7 +18,7 @@
  *
  * @see Docs https://reach.tech/menu-button#menuitems
  */
-const MenuItems = React.forwardRef(function MenuItems(
+export const MenuItems = React.forwardRef(function MenuItems(
     { as: Comp = "div", children, id, onKeyDown, ...props },
     forwardedRef
 ) {
@@ -163,12 +172,43 @@ const MenuItems = React.forwardRef(function MenuItems(
     );
 });
 
-if (__DEV__) {
-    MenuItems.displayName = "MenuItems";
-    MenuItems.propTypes = {
-        children: PropTypes.node
-    };
-}
+///////////////////////////////////////////////////////////////////////////////
+// Actions
+
+const CLEAR_SELECTION_INDEX = "CLEAR_SELECTION_INDEX";
+const CLICK_MENU_ITEM = "CLICK_MENU_ITEM";
+const CLOSE_MENU = "CLOSE_MENU";
+const OPEN_MENU_AT_FIRST_ITEM = "OPEN_MENU_AT_FIRST_ITEM";
+const OPEN_MENU_AT_INDEX = "OPEN_MENU_AT_INDEX";
+const OPEN_MENU_CLEARED = "OPEN_MENU_CLEARED";
+const SEARCH_FOR_ITEM = "SEARCH_FOR_ITEM";
+const SELECT_ITEM_AT_INDEX = "SELECT_ITEM_AT_INDEX";
+const SET_BUTTON_ID = "SET_BUTTON_ID";
+
+const MenuDescendantContext = createDescendantContext < MenuButtonDescendant > "MenuDescendantContext";
+const StableMenuContext = createNamedContext < StableMenuContextValue > ("StableMenuContext", {});
+const UnstableMenuContext = createNamedContext < UnstableMenuContextValue > ("UnstableMenuContext", {});
+
+const initialState = {
+    // The button ID is needed for aria controls and can be set directly and
+    // updated for top-level use via context. Otherwise a default is set by useId.
+    // TODO: Consider deprecating direct ID in 1.0 in favor of id at the top level
+    //       for passing deterministic IDs to descendent components.
+    buttonId: null,
+
+    // Whether or not the menu is expanded
+    isExpanded: false,
+
+    // When a user begins typing a character string, the selection will change if
+    // a matching item is found
+    typeaheadQuery: "",
+
+    // The index of the current selected item. When the selection is cleared a
+    // value of -1 is used.
+    selectionIndex: -1
+};
+
+////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -229,7 +269,7 @@ function reducer(state, action = {}) {
         case CLICK_MENU_ITEM:
             return {
                 ...state,
-                isExpanded: false,
+                isExpanded: true,
                 selectionIndex: -1
             };
         case CLOSE_MENU:
@@ -287,20 +327,6 @@ function reducer(state, action = {}) {
             return state;
         default:
             return state;
-    }
-}
-
-function useDevWarning(condition, message) {
-    if (__DEV__) {
-        /* eslint-disable react-hooks/rules-of-hooks */
-        let messageRef = React.useRef(message);
-        React.useEffect(() => {
-            messageRef.current = message;
-        }, [message]);
-        React.useEffect(() => {
-            warning(condition, messageRef.current);
-        }, [condition]);
-        /* eslint-enable react-hooks/rules-of-hooks */
     }
 }
 
